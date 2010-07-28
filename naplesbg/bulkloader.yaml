@@ -1,0 +1,112 @@
+python_preamble:
+- import: model
+- import: google.appengine.ext.bulkload.transform
+- import: google.appengine.api.datastore
+
+transformers:
+- kind: Accession
+  connector: csv
+  connector_options: 
+    encoding: windows-1252
+    columns: from_header
+    import_options:
+      dialect: excel-tab
+
+  property_map:
+    - property: __key__
+      external_name: key
+      export_transform: transform.key_id_or_name_as_string
+ 
+    - property: acc_num
+      external_name: ACCESSIONS
+      #import_transform: transform.create_foreign_key('TODO: fill in Kind name')
+      export_transform: transform.key_id_or_name_as_string
+ 
+    - property: name
+      external_name: NAME
+ 
+    - property: common_name
+      external_name: COMMON_NAMES
+
+    - property: misc_notes  
+      external_name: MISCELLANEOUS
+
+    - property: range
+      external_name: RANGE
+
+    - property: recd_dt
+      external_name: RECEIVED_DT
+
+    - property: recd_amt
+      external_name: NUM_RCD
+
+    - property: recd_as
+      external_name: RECEIVED_AS
+
+    - property: recd_size
+      external_name: RECD_SIZE
+      
+    - property: recd_notes
+      external_name: RECD_NOTES
+
+    - property: psource_current
+      external_name: PSOURCE_CURRENT
+ 
+    - property: psource_acc_num
+      external_name: PSOURCE_ACC_NUM
+
+    - property: psource_acc_dt
+      external_name: PS_ACC_DT
+
+    - property: psource_misc
+      external_name: PSOURCE_MISC
+
+
+- kind: Plant
+  connector: csv
+  connector_options: 
+    encoding: windows-1252
+    columns: from_header
+    import_options:
+      dialect: excel-tab
+
+  property_map:
+    - property: __key__
+      external_name: key
+      export_transform: transform.key_id_or_name_as_string
+ 
+    - property: acc_num
+      external_name: ACCESSION_NUM
+ 
+    - property: qualifier
+      external_name: QUAL
+
+    - property: sex
+      external_name: S
+ 
+    - property: loc_name
+      external_name: CURRENT_LOCATION
+
+    - property: loc_code
+      external_name: CUR_LOC
+
+    - property: loc_change_type
+      external_name: CLCT
+
+    - property: loc_date
+      external_name: CUR_PLT_DT
+
+    - property: loc_nplants
+      external_name: NUM_PL
+
+    - property: condition
+      external_name: CO
+
+    - property: checked_date
+      external_name: CUR_CHK_DT
+
+    - property: checked_note
+      external_name: CURRENT_CHECK_NOTE
+
+    - property: checked_by
+      external_name: CUR_CHK_BY
