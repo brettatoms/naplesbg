@@ -145,6 +145,7 @@ class AccessionPage(webapp.RequestHandler):
         # the 'q' parameter is used for generic search queries
         q = self.request.get('q')
         if q:
+            q = q.strip()
             # generic query
             page = self.get_single_accession(q)
             if page is None:
@@ -161,7 +162,7 @@ class AccessionPage(webapp.RequestHandler):
         # the acc_num and name parameters are used for specific searches
         acc_num = self.request.get('acc_num')
         if acc_num:
-            page = self.get_single_accession(acc_num)            
+            page = self.get_single_accession(acc_num.strip())            
             if not page:
                 write('<br />')
                 write('<div>%s not found</div>' % acc_num)
@@ -170,7 +171,7 @@ class AccessionPage(webapp.RequestHandler):
 
         name = self.request.get('name')
         if name:
-            page = self.get_accession_list(name)
+            page = self.get_accession_list(name.strip())
             if not page:
                 write('<br />')
                 write('<div>%s not found</div>' % name)
