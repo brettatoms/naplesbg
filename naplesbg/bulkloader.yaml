@@ -1,5 +1,6 @@
 python_preamble:
 - import: model
+- import: main
 - import: google.appengine.ext.bulkload.transform
 - import: google.appengine.api.datastore
 
@@ -24,7 +25,11 @@ transformers:
  
     - property: name
       external_name: NAME
- 
+
+    - property: genus
+      external_name: GENUS
+      import_transform: main.capitalize
+
     - property: common_name
       external_name: COMMON_NAMES
 

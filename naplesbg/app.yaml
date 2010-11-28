@@ -1,5 +1,5 @@
 application: naplesbg
-version: 1
+version: 2
 runtime: python
 api_version: 1
 
@@ -14,3 +14,7 @@ handlers:
 - url: /_ah/queue/deferred
   script: $PYTHON_LIB/google/appengine/ext/deferred/handler.py
   login: admin
+
+builtins: 
+- datastore_admin: on
+- remote_api: on

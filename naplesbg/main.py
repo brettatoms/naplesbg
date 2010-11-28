@@ -7,6 +7,8 @@ from google.appengine.ext.webapp import template
 
 import model
 
+capitalize = lambda s: s.capitalize()
+
 search_form_html = """<form action="/acc" method="get">
     <div>
       <input type="text" name="q" />
@@ -15,13 +17,13 @@ search_form_html = """<form action="/acc" method="get">
     </div>
   </form>"""
 
+
 class MainPage(webapp.RequestHandler):
     def get(self):
         html = template.render('template.html',
                                {'body': search_form_html})
         self.response.out.write(html)
-
-
+        
 
 class AccessionPage(webapp.RequestHandler):
 
@@ -128,6 +130,27 @@ class AccessionPage(webapp.RequestHandler):
         return ''.join(body)
                           
 
+    def get_species_list(self, genus):
+        """
+        Return a string list of <div>s of unique species names
+        matching genus.
+        """
+        body = []
+        write = lambda s: body.append(s)#self.response.out.write(s)
+        query = model.Accession.all().filter('genus =', genus).order('name')
+
+        if query.count() < 1:
+            return None    
+
+        name_set = set()
+        for acc in query.fetch(100):
+            if acc.name not in name_set:
+                write('<div><a href="/acc?name=%s">%s</a></div>' 
+                      % (acc.name, acc.name))
+                name_set.add(acc.name)
+        return ''.join(body)
+
+
     def get(self):
         """
         Handle the get response.
@@ -148,15 +171,26 @@ class AccessionPage(webapp.RequestHandler):
             q = q.strip()
             # generic query
             page = self.get_single_accession(q)
-            if page is None:
-                page = self.get_accession_list(q)
+            if page:
+                finish_page(page)
+                return
+            
+            
+            # no matching accessions so look up species names and genera
+            accessions = self.get_accession_list(q)
+            if accessions:
+                write(accessions)
+                write('<br />')
 
-            if page is None:
+            species = self.get_species_list(q)
+            if species:
+                write(species)
+                
+            if len(body) == 0:
                 write('<br />')
                 write('<div>%s not found</div>' % q)
-                page = ''
 
-            finish_page(page)
+            finish_page('')
             return
 
         # the acc_num and name parameters are used for specific searches
@@ -170,7 +204,8 @@ class AccessionPage(webapp.RequestHandler):
             return
 
         name = self.request.get('name')
-        if name:
+        if name:            
+            # create a list of all accessions which match name
             page = self.get_accession_list(name.strip())
             if not page:
                 write('<br />')
@@ -178,7 +213,15 @@ class AccessionPage(webapp.RequestHandler):
             finish_page(page)
             return
 
-
+        genus = self.request.get('genus')
+        if genus:
+            page = self.get_species_list(genus)
+            if not page:
+                write('<br />')
+                write('No matching names found. </br>')
+            finish_page(page)
+            return
+            
 
 class AdminPage(webapp.RequestHandler):
 
@@ -187,6 +230,7 @@ class AdminPage(webapp.RequestHandler):
 
     def put(self):
         pass
+
 
 application = webapp.WSGIApplication([('/', MainPage),
                                       ('/acc', AccessionPage),

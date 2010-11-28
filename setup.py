@@ -3,6 +3,8 @@ import os
 import sys
 import time
 
+sys.path.insert(0, 'c:/Program Files/Google/google_appengine/lib/fancy_urllib')
+
 email = 'brettatoms@gmail.com'
 accession_export = "c:\\accessions.txt"
 plant_export = "c:\\plants.txt"
@@ -85,7 +87,6 @@ def clear_datastore():
             db.delete(acc)
         except:
             sys.stdout.write('*')
-            pass
         time.sleep(1)
 
     # delete all the plants

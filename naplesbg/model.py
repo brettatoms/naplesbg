@@ -8,6 +8,7 @@ class Accession(Searchable, db.Model):
     # list accessions name recd_dt recd_amt recd_as psource_current
     # psource_acc_num psource_acc_dt psource_misc tab c:\export.txt
     acc_num = db.StringProperty()#)required=True) # TODO: make primary key
+    genus = db.StringProperty()
     name = db.StringProperty()
     range = db.StringProperty()
     common_name = db.StringProperty() # delineated by semicolon
@@ -24,7 +25,7 @@ class Accession(Searchable, db.Model):
     psource_acc_dt = db.StringProperty()
     psource_misc = db.TextProperty()
 
-    INDEX_ONLY = ['acc_num', 'name', 'region', 'common_name', 
+    INDEX_ONLY = ['acc_num', 'name', 'genus', 'region', 'common_name', 
                   'psource_current']
 
 
