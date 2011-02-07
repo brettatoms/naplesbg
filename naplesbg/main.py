@@ -39,12 +39,18 @@ class AccessionPage(webapp.RequestHandler):
         parts.append(row % ('Acc #:', acc.acc_num))
         parts.append(row % ('Common name:', acc.common_name))
         parts.append(row % ('Range:', acc.range))
+        parts.append(row % ("Misc. Notes:", acc.misc_notes))
+        parts.append('<br />')
         parts.append(row % ("Rec'd. Date:", acc.recd_dt))
-        parts.append(row % ("Rec'd. Amt:", acc.recd_amt))
+        parts.append(row % ("Rec'd. Amt:",acc.recd_amt))
+        parts.append(row % ("Rec'd. Size:", acc.recd_size))
         parts.append(row % ("Rec'd. As:", 
                             name_ref%{'name': cgi.escape(acc.name)}))
+        parts.append(row % ("Rec'd. Notes:", acc.recd_notes))
+
         parts.append(row % ("Source:", acc.psource_current))
         parts.append(row % ("Source Acc. #:", acc.psource_acc_num))
+        parts.append(row % ("Source Acc. Date:", acc.psource_acc_dt))
         parts.append(row % ("Source Notes:", acc.psource_misc))
         parts.append('</table>')
         return ''.join(parts)
@@ -75,6 +81,21 @@ class AccessionPage(webapp.RequestHandler):
                  'plant': '%s*%s' % (acc_num, plant.qualifier)}            
             parts.append('<td>%s:</td><td>%s (%s)</td>' \
                              % (href, plant.loc_name, plant.loc_code))
+            parts.append('</tr><tr>')
+            nplants = plant.loc_nplants
+            if not nplants:
+                nplants = '??'
+            parts.append('<td>&nbsp;</td><td>%s plants on %s</td>' \
+                             % (nplants, plant.loc_date))
+            parts.append('</tr><tr>')            
+            checked_date = plant.checked_date
+            if not checked_date:
+                checked_data = '??'
+            parts.append('<td>&nbsp;</td><td>Condition: %s on %s</td>' \
+                             % (plant.condition, plant.checked_date))
+            parts.append('</tr><tr>')
+            parts.append('<td>&nbsp;</td><td>Checked by %s: %s</td>' \
+                             % (plant.checked_by, plant.checked_note))
             parts.append('</tr>')
         parts.append('</table>')
         parts.append('</div>')

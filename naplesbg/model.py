@@ -42,6 +42,7 @@ class Plant(db.Model):
     loc_date = db.StringProperty()
     loc_nplants = db.StringProperty()
 
+    # TODO: need full condition instead of code, e.g. Alive instead of A
     condition = db.StringProperty()
     checked_date = db.StringProperty()
     checked_note = db.TextProperty()
