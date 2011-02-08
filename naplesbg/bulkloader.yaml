@@ -108,7 +108,7 @@ transformers:
       external_name: CO
 
     - property: checked_date
-      external_name: CUR_CHK_DT
+      external_name: CUR_CK_DT
 
     - property: checked_note
       external_name: CURRENT_CHECK_NOTE

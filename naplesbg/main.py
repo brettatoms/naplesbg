@@ -85,6 +85,9 @@ class AccessionPage(webapp.RequestHandler):
             nplants = plant.loc_nplants
             if not nplants:
                 nplants = '??'
+            loc_date = plant.loc_data
+            if not loc_date:
+                loc_date = '??'
             parts.append('<td>&nbsp;</td><td>%s plants on %s</td>' \
                              % (nplants, plant.loc_date))
             parts.append('</tr><tr>')            
@@ -92,7 +95,7 @@ class AccessionPage(webapp.RequestHandler):
             if not checked_date:
                 checked_data = '??'
             parts.append('<td>&nbsp;</td><td>Condition: %s on %s</td>' \
-                             % (plant.condition, plant.checked_date))
+                             % (plant.condition, checked_date))
             parts.append('</tr><tr>')
             parts.append('<td>&nbsp;</td><td>Checked by %s: %s</td>' \
                              % (plant.checked_by, plant.checked_note))
