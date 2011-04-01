@@ -1,10 +1,9 @@
 from google.appengine.ext import db
-from search import Searchable
 
 # TODO: Garden collections/plant collection
 # TODO: add family to Accession
 
-class Accession(Searchable, db.Model):
+class Accession(db.Model):
     # list accessions name recd_dt recd_amt recd_as psource_current
     # psource_acc_num psource_acc_dt psource_misc tab c:\export.txt
     acc_num = db.StringProperty()#)required=True) # TODO: make primary key

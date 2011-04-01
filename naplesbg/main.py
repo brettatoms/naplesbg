@@ -7,7 +7,12 @@ from google.appengine.ext.webapp import template
 
 import model
 
-capitalize = lambda s: s.capitalize()
+def capitalize(s):
+    if not s:
+        return s
+    return s.capitalize()
+    
+#capitalize = lambda s: s.capitalize()
 
 search_form_html = """<form action="/acc" method="get">
     <div>
