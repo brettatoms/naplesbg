@@ -7,12 +7,12 @@ from google.appengine.ext.webapp import template
 
 import model
 
+plant_change_form_uri = 'http://spreadsheets.google.com/viewform?formkey=dG03bFlPNDMwUnlUazZXVUdTdjdZeXc6MQ'
+
 def capitalize(s):
     if not s:
         return s
-    return s.capitalize()
-    
-#capitalize = lambda s: s.capitalize()
+    return s.capitalize()    
 
 search_form_html = """<form action="/acc" method="get">
     <div>
@@ -69,8 +69,7 @@ class AccessionPage(webapp.RequestHandler):
         parts = ['<div>']
         parts.append('Plants:')
         parts.append('<table>')
-        query.filter('acc_num =', acc_num)#.order('qualifier')
-        form = 'http://spreadsheets.google.com/viewform?formkey=dG03bFlPNDMwUnlUazZXVUdTdjdZeXc6MQ'
+        query.filter('acc_num =', acc_num)#.order('qualifier')    
         plants_href = '<a href="%(form)s&entry_0=%(name)s&entry_1=%(date)s&entry_2=%(acc_num)s&entry_3=%(qualifier)s&entry_5=%(location)s">%(plant)s</a>'
         for plant in query:
             # TODO: need to include the name in the Plant table rather
@@ -80,9 +79,9 @@ class AccessionPage(webapp.RequestHandler):
             acc = acc_query.get()
             parts.append('<tr>')
             href = plants_href % \
-                {'form': form, 'name': acc.name, 'acc_num': plant.acc_num, 
-                 'qualifier': plant.qualifier, 'date': datetime.date.today(),
-                 'location': plant.loc_code,
+                {'form': plant_change_form_uri, 'name': acc.name, 
+                 'acc_num': plant.acc_num, 'qualifier': plant.qualifier, 
+                 'date': datetime.date.today(), 'location': plant.loc_code,
                  'plant': '%s*%s' % (acc_num, plant.qualifier)}            
             parts.append('<td>%s:</td><td>%s (%s)</td>' \
                              % (href, plant.loc_name, plant.loc_code))
@@ -111,33 +110,34 @@ class AccessionPage(webapp.RequestHandler):
 
 
     def get_single_accession(self, acc_num):
-        # search for a specific accession number
+        # search for a specific accession number        
         body = []
         write = lambda s: body.append(s)#self.response.out.write(s)
         query = model.Accession.all()
         query.filter('acc_num =', acc_num)
         acc = query.get()
+
+        # TODO: this will get the first accession but will ignore any
+        # other accessions in the table, in reality there should only
+        # be one Accession with acc_num        
         if acc:
             table = self.build_accession_table(acc)
             write(table)
             write('<br />')
-            table = self.build_plants_table(acc.acc_num)
-            write(table)
+            nplants = model.Plant.all().filter('acc_num=',acc.acc_num).count(1)
+            if nplants > 0:
+                table = self.build_plants_table(acc.acc_num)
+                write(table)
+            else:
+                #write('<p>No plants exist for this accession</p>')
+                change_form_href = '<p><a href="%(form)s&entry_0=%(name)s&entry_1=%(date)s&entry_2=%(acc_num)s">Add a plant...</a></p>' % \
+                    {'form': plant_change_form_uri, 'name':acc.name, 
+                     'date': datetime.date.today(), 'acc_num': acc.acc_num}
+                write('<br />')
+                write(change_form_href)                                         
             return ''.join(body)
-        else:
-            return None
-
-        # search for the string in the model's indexed properties
-        #write('acc.search: %s<br/>' % acc_num)
-        results = model.Accession.search(acc_num)
-        if results.count(1000) < 1:
-            write('<div>%s not found</div>' % acc_num)
-            return ''.join(body)
-
-        items = []
-        for item in query.fetch(20):
-            items.append('%s: %s<br/>' % (item.acc_num, item.name))
-        return ''.join(body)
+        
+        return None
 
 
     def get_accession_list(self, name):
@@ -203,7 +203,6 @@ class AccessionPage(webapp.RequestHandler):
             if page:
                 finish_page(page)
                 return
-            
             
             # no matching accessions so look up species names and genera
             accessions = self.get_accession_list(q)
