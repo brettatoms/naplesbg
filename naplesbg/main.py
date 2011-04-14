@@ -87,10 +87,10 @@ class AccessionPage(webapp.RequestHandler):
                              % (href, plant.loc_name, plant.loc_code))
             parts.append('</tr><tr>')
             nplants = plant.loc_nplants
-            if not nplants:
+            if nplants in (None, ''):
                 nplants = '??'
-            loc_date = plant.loc_data
-            if not loc_date:
+            loc_date = plant.loc_date
+            if not loc_date in (None, ''):
                 loc_date = '??'
             parts.append('<td>&nbsp;</td><td>%s plants on %s</td>' \
                              % (nplants, plant.loc_date))
@@ -124,7 +124,8 @@ class AccessionPage(webapp.RequestHandler):
             table = self.build_accession_table(acc)
             write(table)
             write('<br />')
-            nplants = model.Plant.all().filter('acc_num=',acc.acc_num).count(1)
+            nplants = model.Plant.all().\
+                filter('acc_num =',acc.acc_num).count(1)            
             if nplants > 0:
                 table = self.build_plants_table(acc.acc_num)
                 write(table)
