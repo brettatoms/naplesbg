@@ -14,13 +14,14 @@ def capitalize(s):
         return s
     return s.capitalize()    
 
-search_form_html = """<form action="/acc" method="get">
-    <div>
-      <input type="text" name="q" />
-      <br />
-      <input type="submit" value="Search">
-    </div>
-  </form>"""
+# search_form_html = """<form action="/acc" method="get">
+#     <div>
+#       <input type="text" name="q" />
+#       <br />
+#       <input type="submit" value="Search">
+#     </div>
+#   </form>"""
+search_form_html = ""
 
 
 class MainPage(webapp.RequestHandler):
