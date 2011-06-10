@@ -167,7 +167,7 @@ class AccessionPage(webapp.RequestHandler):
         matching genus.
         """
         body = []
-        write = lambda s: body.append(s)#self.response.out.write(s)
+        write = lambda s: body.append(s)
         query = model.Accession.all().filter('genus =', genus).order('name')
 
         if query.count() < 1:
@@ -188,39 +188,33 @@ class AccessionPage(webapp.RequestHandler):
         """
         body = []
         write = lambda s: body.append(s)#self.response.out.write(s)
+        debug = lambda m: write('<p>%s</p>' % m)
 
         def finish_page(page):
-            write(page)
+            if page:
+                write(page)
             write('<br/>')
             write(search_form_html)
             self.response.out.write(template.render('template.html', 
                                                    {'body': ''.join(body)}))
 
+
         # the 'q' parameter is used for generic search queries
         q = self.request.get('q')
+        page = ''
+
         if q:
             q = q.strip()
             # generic query
             page = self.get_single_accession(q)
-            if page:
-                finish_page(page)
-                return
-            
-            # no matching accessions so look up species names and genera
-            accessions = self.get_accession_list(q)
-            if accessions:
-                write(accessions)
+            if not page:
+                page = self.get_accession_list(q)
+            if not page:
+                page = self.get_species_list(q)
+            if not page:
                 write('<br />')
-
-            species = self.get_species_list(q)
-            if species:
-                write(species)
-                
-            if len(body) == 0:
-                write('<br />')
-                write('<div>%s not found</div>' % q)
-
-            finish_page('')
+                write('<div>%s not found</div>' % q)                
+            finish_page(page)
             return
 
         # the acc_num and name parameters are used for specific searches
@@ -237,6 +231,7 @@ class AccessionPage(webapp.RequestHandler):
         if name:            
             # create a list of all accessions which match name
             page = self.get_accession_list(name.strip())
+            self.response.out.write(page)
             if not page:
                 write('<br />')
                 write('<div>%s not found</div>' % name)

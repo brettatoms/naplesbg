@@ -35,5 +35,10 @@ indexes:
 
 - kind: Accession
   properties:
+  - name: __searchable_text_index_genus
+  - name: name
+
+- kind: Accession
+  properties:
   - name: genus
   - name: name

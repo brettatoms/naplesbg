@@ -3,6 +3,7 @@ python_preamble:
 - import: main
 - import: google.appengine.ext.bulkload.transform
 - import: google.appengine.api.datastore
+- import: google.appengine.ext.db
 
 transformers:
 - kind: Accession
@@ -35,6 +36,7 @@ transformers:
 
     - property: misc_notes  
       external_name: MISCELLANEOUS
+      import_transform: db.Text
 
     - property: range
       external_name: RANGE
@@ -53,6 +55,7 @@ transformers:
       
     - property: recd_notes
       external_name: RECD_NOTES
+      import_transform: db.Text
 
     - property: psource_current
       external_name: PSOURCE_CURRENT
@@ -65,6 +68,7 @@ transformers:
 
     - property: psource_misc
       external_name: PSOURCE_MISC
+      import_transform: db.Text
 
 
 - kind: Plant
@@ -112,6 +116,7 @@ transformers:
 
     - property: checked_note
       external_name: CURRENT_CHECK_NOTE
+      import_transform: db.Text
 
     - property: checked_by
       external_name: CUR_CHK_BY

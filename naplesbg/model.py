@@ -28,6 +28,7 @@ class Accession(db.Model):
                   'psource_current']
 
 
+
 class Plant(db.Model):
     acc_num = db.StringProperty()#required=True)
     qualifier = db.StringProperty()
@@ -46,21 +47,3 @@ class Plant(db.Model):
     checked_date = db.StringProperty()
     checked_note = db.TextProperty()
     checked_by = db.StringProperty()
-
-
-# class PlantLocation(db.Model):
-#     # list plants acc_num, acc_num_qual, location_full, location
-#     plant = db.ReferenceProperty(Accession, collection_name="locations")
-#     location_code = db.StringProperty()
-#     location_name = db.StringProperty()
-#     change_type = db.StringProperty()
-#     date = db.StringProperty()
-#     nplants = db.IntegerProperty()
-
-
-# class PlantCheck(db.Model):
-#     plant = db.ReferenceProperty(Accession, collection_name="checks")
-#     condition = db.StringProperty()
-#     date = db.StringProperty()
-#     note = db.TextProperty()
-#     checked_by = db.StringProperty()

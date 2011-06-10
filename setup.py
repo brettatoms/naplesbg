@@ -70,10 +70,9 @@ def clear_datastore():
         #return raw_input('Username:'), getpass.getpass('Password:')
         return email, getpass.getpass('Password:')
     
-    app_id = 'naplesbg'
-    host = '%s.appspot.com' % app_id
-    remote_api_stub.ConfigureRemoteDatastore(app_id, '/remote_api', auth_func, 
-                                             host)
+    remote_api_stub.ConfigureRemoteDatastore('naplesbg', '/remote_api', 
+                                             auth_func, 
+                                             base_url.replace('http://',''))
 
     # delete all the accessions
     print 'deleting Accessions...'
@@ -85,7 +84,8 @@ def clear_datastore():
             if not acc:
                 break
             db.delete(acc)
-        except:
+        except Exception, e:
+            print e
             sys.stdout.write('*')
         time.sleep(1)
 
