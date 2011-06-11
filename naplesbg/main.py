@@ -168,7 +168,8 @@ class AccessionPage(webapp.RequestHandler):
         """
         body = []
         write = lambda s: body.append(s)
-        query = model.Accession.all().filter('genus =', genus).order('name')
+        query = model.Accession.all().filter('genus =', capitalize(genus)).\
+            order('name')
 
         if query.count() < 1:
             return None    
@@ -197,7 +198,6 @@ class AccessionPage(webapp.RequestHandler):
             write(search_form_html)
             self.response.out.write(template.render('template.html', 
                                                    {'body': ''.join(body)}))
-
 
         # the 'q' parameter is used for generic search queries
         q = self.request.get('q')
