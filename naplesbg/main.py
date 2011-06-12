@@ -232,7 +232,7 @@ class AccessionPage(webapp.RequestHandler):
         # the acc_num and name parameters are used for specific searches
         acc_num = self.request.get('acc_num')
         if acc_num:
-            page = self.get_single_accession(acc_num.strip())            
+            page = self.get_single_accession(acc_num.strip())       
             if not page:
                 write('<br />')
                 write('<div>%s not found</div>' % acc_num)
@@ -243,7 +243,6 @@ class AccessionPage(webapp.RequestHandler):
         if name:            
             # create a list of all accessions which match name
             page = self.get_accessions_by_name(name.strip())
-            self.response.out.write(page)
             if not page:
                 write('<br />')
                 write('<div>%s not found</div>' % name)
