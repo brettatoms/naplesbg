@@ -14,6 +14,21 @@ def capitalize(s):
         return s
     return s.capitalize()    
 
+
+def normalize_searchables(s):
+    stop_words = ['a', 'an', 'and', 'of', 'this', 'am', 'at', 'by', 'do', 'x',
+                  'for', 'i', 'it', 'my', 'on', 'not', 'so', 'to', 'up', 
+                  ';', ',', '.', '\'', '"']
+    # remove stop words and punctuation and make words lowercase
+    items = [i for i in s.split(' ') if i not in stop_words]
+    items = map(lambda x: str(x).translate(None, ';.,:"\'').lower(), items)
+    
+    # add right side of accession number, assume 9 digit number, e.g. 201001234
+    items.append(items[0][5:])
+    
+    return items
+    
+
 # search_form_html = """<form action="/acc" method="get">
 #     <div>
 #       <input type="text" name="q" />
@@ -142,7 +157,7 @@ class AccessionPage(webapp.RequestHandler):
         return None
 
 
-    def get_accession_list(self, name):
+    def get_accessions_by_name(self, name):
         """
         Return a string list of <div>s of acccession.
         """
@@ -161,7 +176,7 @@ class AccessionPage(webapp.RequestHandler):
         return ''.join(body)
                           
 
-    def get_species_list(self, genus):
+    def get_species_by_genus(self, genus):
         """
         Return a string list of <div>s of unique species names
         matching genus.
@@ -202,18 +217,15 @@ class AccessionPage(webapp.RequestHandler):
         # the 'q' parameter is used for generic search queries
         q = self.request.get('q')
         page = ''
-
+        
         if q:
-            q = q.strip()
-            # generic query
-            page = self.get_single_accession(q)
-            if not page:
-                page = self.get_accession_list(q)
-            if not page:
-                page = self.get_species_list(q)
-            if not page:
-                write('<br />')
-                write('<div>%s not found</div>' % q)                
+            q = q.strip().lower()
+            query = model.Accession.all()
+            query.filter('_searchable =', q.lower()).order('name')
+            write('<br/>') # helps with fat thumbs
+            for acc in query:
+                write('<div><a href="/acc?acc_num=%(acc_num)s">%(acc_num)s</a> - %(name)s</div>' 
+                  % {'acc_num': acc.acc_num, 'name': acc.name})
             finish_page(page)
             return
 
@@ -230,7 +242,7 @@ class AccessionPage(webapp.RequestHandler):
         name = self.request.get('name')
         if name:            
             # create a list of all accessions which match name
-            page = self.get_accession_list(name.strip())
+            page = self.get_accessions_by_name(name.strip())
             self.response.out.write(page)
             if not page:
                 write('<br />')
@@ -240,7 +252,7 @@ class AccessionPage(webapp.RequestHandler):
 
         genus = self.request.get('genus')
         if genus:
-            page = self.get_species_list(genus)
+            page = self.get_species_by_genus(genus)
             if not page:
                 write('<br />')
                 write('No matching names found. </br>')

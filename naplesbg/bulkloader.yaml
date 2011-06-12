@@ -70,6 +70,10 @@ transformers:
       external_name: PSOURCE_MISC
       import_transform: db.Text
 
+    - property: _searchable
+      import_template: "%(ACCESSIONS)s %(GENUS)s %(SPECIES)s %(SPECIES_2)s %(CULTIVAR)s %(CULTIVAR_2)s %(FAM)s %(COMMON_NAMES)s %(PSOURCE_CURRENT)s"
+      import_transform: main.normalize_searchables
+    
 
 - kind: Plant
   connector: csv

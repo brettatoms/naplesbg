@@ -24,8 +24,10 @@ class Accession(db.Model):
     psource_acc_dt = db.StringProperty()
     psource_misc = db.TextProperty()
 
+    _searchable = db.StringListProperty()
+
     INDEX_ONLY = ['acc_num', 'name', 'genus', 'region', 'common_name', 
-                  'psource_current']
+                  'psource_current', '_searchable']
 
 
 
