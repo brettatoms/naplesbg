@@ -18,7 +18,13 @@ def capitalize(s):
 def normalize_searchables(s):
     stop_words = ['a', 'an', 'and', 'of', 'this', 'am', 'at', 'by', 'do', 'x',
                   'for', 'i', 'it', 'my', 'on', 'not', 'so', 'to', 'up', 
-                  ';', ',', '.', '\'', '"']
+                  ';', ',', '.', '\'', '"', '']
+
+    # i don't know how we could get an empty string here but it seems
+    # to happen sometimes
+    if not s.strip(): 
+        return ['ERROR']
+    
     # remove stop words and punctuation and make words lowercase
     items = [i for i in s.split(' ') if i not in stop_words]
     items = map(lambda x: re.sub('\W', '', x).lower(), items)

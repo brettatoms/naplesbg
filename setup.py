@@ -23,7 +23,8 @@ def upload():
                 line = line.replace('PSOURCE_ACC_#', 'PSOURCE_ACC_NUM')
                 line = line.replace('RECEIVED AS', 'RECEIVED_AS')
                 line = line.replace('COMMON_NAME(S)', 'COMMON_NAMES')
-            sys.stdout.write(line)
+            if not line.strip() == '':
+                sys.stdout.write(line)
         f.close()
 
     def fix_plant_file():
@@ -32,7 +33,8 @@ def upload():
             if f.isfirstline():
                 line = line.replace('ACCESSION_#', 'ACCESSION_NUM')            
                 line = line.replace('#_PL', 'NUM_PL')
-            sys.stdout.write(line)
+            if not line.strip() == '':
+                sys.stdout.write(line)
         f.close()
 
     # TODO: need to convert headers of converted files
