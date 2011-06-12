@@ -219,13 +219,19 @@ class AccessionPage(webapp.RequestHandler):
         page = ''
         
         if q:
+            has_results = False
             q = q.strip().lower()
             query = model.Accession.all()
             query.filter('_searchable =', q.lower()).order('name')
             write('<br/>') # helps with fat thumbs
             for acc in query:
+                has_results = True
                 write('<div><a href="/acc?acc_num=%(acc_num)s">%(acc_num)s</a> - %(name)s</div>' 
                   % {'acc_num': acc.acc_num, 'name': acc.name})
+            
+            if not has_results:
+                write('<div>"%s" not found</div>' % q)
+
             finish_page(page)
             return
 
