@@ -1,5 +1,6 @@
 import cgi
 import datetime
+import re
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -14,14 +15,13 @@ def capitalize(s):
         return s
     return s.capitalize()    
 
-
 def normalize_searchables(s):
     stop_words = ['a', 'an', 'and', 'of', 'this', 'am', 'at', 'by', 'do', 'x',
                   'for', 'i', 'it', 'my', 'on', 'not', 'so', 'to', 'up', 
                   ';', ',', '.', '\'', '"']
     # remove stop words and punctuation and make words lowercase
     items = [i for i in s.split(' ') if i not in stop_words]
-    items = map(lambda x: str(x).translate(None, ';.,:"\'').lower(), items)
+    items = map(lambda x: re.sub('\W', '', x).lower(), items)
     
     # add right side of accession number, assume 9 digit number, e.g. 201001234
     items.append(items[0][5:])
