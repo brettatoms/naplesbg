@@ -8,6 +8,20 @@ handlers:
   script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
   login: admin
 
+- url: /maps/(.*\.svg)
+  static_files: maps/\1
+  upload: maps/(.*\.svg)
+  mime_type: image/svg+xml
+
+- url: /maps/(.*\.png)
+  static_files: maps/\1
+  upload: maps/(.*\.png)
+
+- url: /maps/(.*\.pdf)
+  static_files: maps/\1
+  upload: maps/(.*\.pdf)
+  mime_type: application/pdf
+
 - url: /.*
   script: main.py
 
