@@ -65,6 +65,23 @@ class MainPage(webapp.RequestHandler):
 
 class AccessionPage(webapp.RequestHandler):
 
+    def make_accession_link(self, acc_num):
+        """
+        Return a link to an accession page for acc_num.  The link will
+        be styled red if the accession has plants but they are all dead.
+        """
+        template ='<a %(style)s href="/acc?acc_num=%(acc_num)s">%(acc_num)s</a>'
+        style = ''
+        query = model.Plant.all().filter('acc_num = ', acc_num)
+        if query.count(1) != 0:
+            query.filter("condition !=", "D").filter("condition !=", "R").\
+                filter("condition !=", "U")
+            if query.count(1) == 0:
+                style = 'style="color: #C00"'
+
+        return template % {'style': style, 'acc_num': acc_num}
+        
+        
     def build_accession_table(self, acc):
         """
         Return an html table from the acc argument.
@@ -138,6 +155,8 @@ class AccessionPage(webapp.RequestHandler):
             if not checked_date:
                 checked_data = '??'
             condition = condition_map.get(plant.condition, plant.condition)
+            if plant.condition in ('DRU'):
+                condition = '<span style="color:red">%s</span>' % condition
             parts.append('<td>&nbsp;</td><td>Condition: %s on %s</td>' \
                              % (condition, checked_date))
             parts.append('</tr><tr>')
@@ -199,8 +218,9 @@ class AccessionPage(webapp.RequestHandler):
 
         #query.order('acc_num')        
         for acc in query.fetch(100):
-            write('<div><a href="/acc?acc_num=%(acc_num)s">%(acc_num)s</a> - %(name)s</div>' 
-                  % {'acc_num': acc.acc_num, 'name': acc.name})
+            link = self.make_accession_link(acc.acc_num)
+            write('<div>%(link)s - %(name)s</div>' \
+                      % {'link': link, 'name': acc.name})
         return ''.join(body)
                           
 
@@ -265,8 +285,9 @@ class AccessionPage(webapp.RequestHandler):
             write('<br/>') # helps with fat thumbs
             for acc in query:
                 has_results = True
-                write('<div><a href="/acc?acc_num=%(acc_num)s">%(acc_num)s</a> - %(name)s</div>' 
-                  % {'acc_num': acc.acc_num, 'name': acc.name})
+                link = self.make_accession_link(acc.acc_num)
+                write('<div>%(link)s - %(name)s</div>' \
+                          % {'link': link, 'name': acc.name})
             
             if not has_results:
                 write('<div>"%s" not found</div>' % q)
