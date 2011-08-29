@@ -41,6 +41,12 @@ indexes:
 - kind: Accession
   properties:
   - name: _searchable
+  - name: acc_num
+  - name: name
+
+- kind: Accession
+  properties:
+  - name: _searchable
   - name: name
 
 - kind: Accession

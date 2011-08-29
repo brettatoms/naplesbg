@@ -44,6 +44,17 @@ def normalize_searchables(s):
 #   </form>"""
 search_form_html = ""
 
+condition_map = {'A': 'Alive',
+                 'E': 'Excellent',
+                 'G': 'Good',
+                 'F': 'Fair',
+                 'P': 'Poor',
+                 'Q': 'Questionable',
+                 'I': 'Indistinguishable',
+                 'D': 'Dead',
+                 'R': 'Deaccessioned/Removed',
+                 'U': 'Unable to locate'}
+
 
 class MainPage(webapp.RequestHandler):
     def get(self):
@@ -61,7 +72,7 @@ class AccessionPage(webapp.RequestHandler):
         parts = ['<table>']
         row = '<tr><td>%s</td><td>%s</td></tr>'
         #parts.append(row % ('Name:', acc.name))
-        name_href = '<a href="/acc?name=%(name)s&order=acc_num">%(name)s</a>'
+        name_href = '<a href="/acc?name=%(name)s">%(name)s</a>'
         google_href = '<span style="margin-left: 40px"><a href="http://google.com/search?q=%(name)s">google</a></span>'
         name_href = name_href + google_href
         parts.append(row % ('Name:', name_href%{'name': cgi.escape(acc.name)}))
@@ -126,8 +137,9 @@ class AccessionPage(webapp.RequestHandler):
             checked_date = plant.checked_date
             if not checked_date:
                 checked_data = '??'
+            condition = condition_map.get(plant.condition, plant.condition)
             parts.append('<td>&nbsp;</td><td>Condition: %s on %s</td>' \
-                             % (plant.condition, checked_date))
+                             % (condition, checked_date))
             parts.append('</tr><tr>')
             parts.append('<td>&nbsp;</td><td>Checked by %s: %s</td>' \
                              % (plant.checked_by, plant.checked_note))
@@ -171,32 +183,39 @@ class AccessionPage(webapp.RequestHandler):
 
     def get_accessions_by_name(self, name, order=None):
         """
-        Return a string list of <div>s of acccession.
+        Return a string list of <div>s of acccession links.
         """
         body = []
         write = lambda s: body.append(s)#self.response.out.write(s)
         query = model.Accession.all()
-        query.filter('name =', name).order(order)
+        query.filter('name =', name)
+        if order:
+            query.order(order)
+        else:
+            query.order('name').order('acc_num')
 
         if query.count() < 1:
             return None    
 
-        query.order('acc_num')        
+        #query.order('acc_num')        
         for acc in query.fetch(100):
             write('<div><a href="/acc?acc_num=%(acc_num)s">%(acc_num)s</a> - %(name)s</div>' 
                   % {'acc_num': acc.acc_num, 'name': acc.name})
         return ''.join(body)
                           
 
-    def get_species_by_genus(self, genus, order='name'):
+    def get_species_by_genus(self, genus, order=None):
         """
         Return a string list of <div>s of unique species names
         matching genus.
         """
         body = []
         write = lambda s: body.append(s)
-        query = model.Accession.all().filter('genus =', capitalize(genus)).\
-            order(order)
+        query = model.Accession.all().filter('genus =', capitalize(genus))
+        if order:
+           query.order(order)
+        else:
+            query.order('name').order('acc_num')
 
         if query.count() < 1:
             return None    
@@ -229,14 +248,20 @@ class AccessionPage(webapp.RequestHandler):
         # the 'q' parameter is used for generic search queries
         q = self.request.get('q')
         order = self.request.get('order')
-        if not order:
-            order = 'name'
+        if order in (None, ''):
+            order = None
         page = ''        
         if q:
             has_results = False
             q = q.strip().lower()
             query = model.Accession.all()
-            query.filter('_searchable =', q.lower()).order(order)
+            
+            query.filter('_searchable =', q.lower())
+            if order:
+                query.order(order)
+            else:
+                query.order('acc_num').order('name')
+
             write('<br/>') # helps with fat thumbs
             for acc in query:
                 has_results = True
@@ -262,7 +287,7 @@ class AccessionPage(webapp.RequestHandler):
         name = self.request.get('name')
         if name:            
             # create a list of all accessions which match name
-            page = self.get_accessions_by_name(name.strip(), order)
+            page = self.get_accessions_by_name(name.strip())
             if not page:
                 write('<br />')
                 write('<div>%s not found</div>' % name)
@@ -277,6 +302,9 @@ class AccessionPage(webapp.RequestHandler):
                 write('No matching names found. </br>')
             finish_page(page)
             return
+
+        # only called if nothing else matches
+        finish_page('')
             
 
 class AdminPage(webapp.RequestHandler):
