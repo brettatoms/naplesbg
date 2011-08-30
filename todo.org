@@ -6,8 +6,6 @@
   - Notes on accessions, e.g. is it a Thornton variety
   - More field in general and removing fields from display that are empty
   - Faster input, autocompletion?    
-** Admin Page
-   - Clear datastore
-** Test Data for dev server
-** Species page
-   - name a page for detail information about a species
+  - Test Date for dev server
+  - Species page with info on species??
+
