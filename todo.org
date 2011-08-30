@@ -1,14 +1,13 @@
-* Text Searching
-  - http://www.billkatz.com/2009/6/Simple-Full-Text-Search-for-App-Engine
-  - GAE Searchable Model (http://www.billkatz.com/2008/8/A-SearchableModel-for-App-Engine)
-  - http://www.allbuttonspressed.com/projects/nonrel-search
-  - http://gae-full-text-search.appspot.com/docs/
-  - another option is to split all the species names by spaces and
-    store the parts in individual fields and search on those, it would
-    also be wise to lowercase everything so you could do case
-    insensitive searches....could the split parts be stored in a list property?
-* Admin Page
-  - Clear datastore
-* Test Data for dev server
-* Species page
-  - name a page for detail information about a species
+* TODO
+  - Searching by location/inventory by location
+  - Integrate invasive list into accession search
+  - Integrate Redlist
+  - Tag Registered Plumeria varieties
+  - Notes on accessions, e.g. is it a Thornton variety
+  - More field in general and removing fields from display that are empty
+  - Faster input, autocompletion?    
+** Admin Page
+   - Clear datastore
+** Test Data for dev server
+** Species page
+   - name a page for detail information about a species
