@@ -12,6 +12,12 @@ indexes:
   - name: name
   - name: acc_num
 
+- kind: Accession
+  properties:
+  - name: _searchable
+  - name: name
+  - name: acc_num
+
 - kind: Plant
   properties:
   - name: acc_num

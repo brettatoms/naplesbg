@@ -280,7 +280,7 @@ class AccessionPage(webapp.RequestHandler):
             if order:
                 query.order(order)
             else:
-                query.order('acc_num').order('name')
+                query.order('name').order('acc_num')
 
             write('<br/>') # helps with fat thumbs
             for acc in query:
