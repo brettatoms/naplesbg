@@ -1,4 +1,4 @@
-* TODO
+* To Do
   - Searching by location/inventory by location
   - Integrate invasive list into accession search
   - Integrate Redlist
